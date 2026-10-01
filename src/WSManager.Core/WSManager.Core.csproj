@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Toda la logica de sOC WSManager, sin interfaz: modelo, registro, SCM, vigilancia, salidas,
+    linea de ordenes, importacion y textos. La usan el host (NativeAOT) y la aplicacion WPF, y es lo
+    que mide el banco de pruebas.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>SocWsManager</RootNamespace>
+    <AssemblyName>WSManager.Core</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WSManager.Tests" />
+    <EmbeddedResource Include="whatsnew.json" LogicalName="SocWsManager.whatsnew.json" />
+  </ItemGroup>
+
+</Project>

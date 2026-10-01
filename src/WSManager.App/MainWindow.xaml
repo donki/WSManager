@@ -1,0 +1,94 @@
+<Window x:Class="SocWsManager.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SocWsManager.App.Services"
+        Title="{loc:T AppTitle}"
+        Width="1100" Height="640" MinWidth="760" MinHeight="420"
+        Background="{DynamicResource PageBackground}"
+        UseLayoutRounding="True" SnapsToDevicePixels="True">
+
+    <DockPanel Margin="12">
+
+        <!-- ============================ Barra de acciones ============================ -->
+        <!-- Solo iconos (constitucion 6.1); el nombre de cada uno va en el tooltip y en UI Automation. -->
+        <Grid DockPanel.Dock="Top" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <WrapPanel VerticalAlignment="Center">
+                <Image x:Name="LogoImage" Width="30" Height="30" Margin="0,0,10,0" VerticalAlignment="Center" />
+                <Button x:Name="NewButton" Style="{StaticResource IconButton}" Content="&#xE710;" ToolTip="{loc:T ActionNew}" AutomationProperties.Name="{loc:T ActionNew}" Click="OnNew" Margin="0,0,8,0" />
+                <Button x:Name="EditButton" Style="{StaticResource GhostIconButton}" Content="&#xE70F;" ToolTip="{loc:T ActionEdit}" AutomationProperties.Name="{loc:T ActionEdit}" Click="OnEdit" />
+                <Button x:Name="StartButton" Style="{StaticResource GhostIconButton}" Content="&#xE768;" ToolTip="{loc:T ActionStartContinue}" AutomationProperties.Name="{loc:T ActionStartContinue}" Click="OnStart" />
+                <Button x:Name="PauseButton" Style="{StaticResource GhostIconButton}" Content="&#xE769;" ToolTip="{loc:T ActionPause}" AutomationProperties.Name="{loc:T ActionPause}" Click="OnPause" />
+                <Button x:Name="StopButton" Style="{StaticResource GhostIconButton}" Content="&#xE71A;" ToolTip="{loc:T ActionStop}" AutomationProperties.Name="{loc:T ActionStop}" Click="OnStop" />
+                <Button x:Name="RestartButton" Style="{StaticResource GhostIconButton}" Content="&#xE72C;" ToolTip="{loc:T ActionRestart}" AutomationProperties.Name="{loc:T ActionRestart}" Click="OnRestart" />
+                <Button x:Name="RotateButton" Style="{StaticResource GhostIconButton}" Content="&#xE8EE;" ToolTip="{loc:T ActionRotate}" AutomationProperties.Name="{loc:T ActionRotate}" Click="OnRotate" />
+                <Button x:Name="LogsButton" Style="{StaticResource GhostIconButton}" Content="&#xE8A5;" ToolTip="{loc:T ActionLogs}" AutomationProperties.Name="{loc:T ActionLogs}" Click="OnLogs" />
+                <Button x:Name="RemoveButton" Style="{StaticResource GhostDangerIconButton}" Content="&#xE74D;" ToolTip="{loc:T ActionRemove}" AutomationProperties.Name="{loc:T ActionRemove}" Click="OnRemove" Margin="8,0,0,0" />
+            </WrapPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button x:Name="ImportButton" Style="{StaticResource GhostIconButton}" Content="&#xE8B5;" ToolTip="{loc:T ActionImport}" AutomationProperties.Name="{loc:T ActionImport}" Click="OnImport" />
+                <Button x:Name="AdminButton" Style="{StaticResource GhostIconButton}" Content="&#xE7EF;" ToolTip="{loc:T ActionAdmin}" AutomationProperties.Name="{loc:T ActionAdmin}" Click="OnAdmin" />
+                <ToggleButton x:Name="StartupToggle" Style="{StaticResource ToggleIconButton}" Content="&#xE7E8;" ToolTip="{loc:T ActionStartup}" AutomationProperties.Name="{loc:T ActionStartup}" Click="OnStartupToggle" />
+                <Button x:Name="GuideButton" Style="{StaticResource GhostIconButton}" Content="&#xE897;" ToolTip="{loc:T ActionGuide}" AutomationProperties.Name="{loc:T ActionGuide}" Click="OnGuide" />
+                <Button x:Name="NewsButton" Style="{StaticResource GhostIconButton}" Content="&#xE734;" ToolTip="{loc:T ActionWhatsNew}" AutomationProperties.Name="{loc:T ActionWhatsNew}" Click="OnNews" />
+                <Button x:Name="LanguageButton" Style="{StaticResource GhostIconButton}" Content="&#xE8C1;" ToolTip="{loc:T LanguageTooltip}" AutomationProperties.Name="{loc:T LanguageTooltip}" Click="OnLanguage" />
+                <Button x:Name="AboutButton" Style="{StaticResource GhostIconButton}" Content="&#xE946;" ToolTip="{loc:T ActionAbout}" AutomationProperties.Name="{loc:T ActionAbout}" Click="OnAbout" />
+            </StackPanel>
+        </Grid>
+
+        <!-- ============================ Barra de estado ============================ -->
+        <Grid DockPanel.Dock="Bottom" Margin="4,8,4,0">
+            <TextBlock x:Name="StatusText" Style="{StaticResource HintText}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+            <TextBlock x:Name="ModeText" Style="{StaticResource HintText}" HorizontalAlignment="Right" TextWrapping="NoWrap" />
+        </Grid>
+
+        <!-- ============================ Lista ============================ -->
+        <Border Style="{StaticResource Card}" Padding="8">
+            <Grid>
+                <ListView x:Name="ServiceList" Background="Transparent" BorderThickness="0"
+                          ItemContainerStyle="{StaticResource ServiceRow}" SelectionMode="Single"
+                          SelectionChanged="OnSelectionChanged" MouseDoubleClick="OnRowDoubleClick" KeyDown="OnListKeyDown">
+                    <ListView.View>
+                        <GridView ColumnHeaderContainerStyle="{StaticResource ColumnHeader}">
+                            <GridViewColumn x:Name="ColState" Header="{loc:T ColState}" Width="170">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="10" Height="10" Fill="{Binding Dot}" Margin="4,0,8,0" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding StateText}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="{loc:T ColService}" Width="300">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding NameLine}" FontSize="11" Opacity="0.75" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="{loc:T ColStart}" Width="140" DisplayMemberBinding="{Binding StartText}" />
+                            <GridViewColumn Header="{loc:T ColAccount}" Width="170" DisplayMemberBinding="{Binding AccountText}" />
+                            <GridViewColumn Header="{loc:T ColPid}" Width="80" DisplayMemberBinding="{Binding ServicePid}" />
+                            <GridViewColumn Header="{loc:T ColAppPid}" Width="90" DisplayMemberBinding="{Binding AppPid}" />
+                            <GridViewColumn Header="{loc:T ColRestarts}" Width="90" DisplayMemberBinding="{Binding Restarts}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <StackPanel x:Name="EmptyPanel" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="460">
+                    <TextBlock Text="{loc:T EmptyList}" Style="{StaticResource BodyText}" TextAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,0">
+                        <Button x:Name="EmptyNewButton" Style="{StaticResource IconButton}" Content="&#xE710;" ToolTip="{loc:T ActionNew}" AutomationProperties.Name="{loc:T ActionNew}" Click="OnNew" />
+                        <Button x:Name="EmptyImportButton" Style="{StaticResource GhostIconButton}" Content="&#xE8B5;" ToolTip="{loc:T ActionImport}" AutomationProperties.Name="{loc:T ActionImport}" Click="OnImport" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </DockPanel>
+</Window>

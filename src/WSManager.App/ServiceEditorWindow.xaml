@@ -1,0 +1,240 @@
+<Window x:Class="SocWsManager.App.ServiceEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SocWsManager.App.Services"
+        Width="760" Height="680" MinWidth="620" MinHeight="520"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{DynamicResource PageBackground}"
+        UseLayoutRounding="True">
+
+    <DockPanel Margin="16">
+
+        <!-- Nombre del servicio: solo se elige al crearlo. -->
+        <Grid DockPanel.Dock="Top" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{loc:T FieldServiceName}" Style="{StaticResource BodyText}" VerticalAlignment="Center" Margin="0,0,10,0" />
+            <TextBox x:Name="NameBox" Grid.Column="1" Style="{StaticResource Field}" LostFocus="OnFieldLostFocus" />
+        </Grid>
+
+        <!-- Botones fijos abajo: cancelar y guardar. -->
+        <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0">
+            <TextBlock x:Name="ErrorText" Style="{StaticResource HintText}" Foreground="{DynamicResource Danger}" VerticalAlignment="Center" Margin="0,0,100,0" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="CancelButton" Style="{StaticResource GhostIconButton}" Content="&#xE711;" ToolTip="{loc:T Cancel}" AutomationProperties.Name="{loc:T Cancel}" IsCancel="True" Click="OnCancel" />
+                <Button x:Name="SaveButton" Style="{StaticResource IconButton}" Content="&#xE74E;" ToolTip="{loc:T Save}" AutomationProperties.Name="{loc:T Save}" Click="OnSave" />
+            </StackPanel>
+        </Grid>
+
+        <TabControl x:Name="Tabs" Style="{StaticResource EditorTabs}">
+
+            <!-- ============================ Aplicación ============================ -->
+            <TabItem x:Name="TabApplication" Header="{loc:T TabApplication}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="{loc:T FieldPath}" Style="{StaticResource FieldLabel}" />
+                        <DockPanel>
+                            <Button x:Name="BrowseApp" DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE8E5;" ToolTip="{loc:T Browse}" AutomationProperties.Name="{loc:T Browse}" Click="OnBrowseApp" />
+                            <TextBox x:Name="AppBox" Style="{StaticResource Field}" LostFocus="OnFieldLostFocus" />
+                        </DockPanel>
+                        <TextBlock Text="{loc:T FieldDirectory}" Style="{StaticResource FieldLabel}" />
+                        <DockPanel>
+                            <Button x:Name="BrowseDir" DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE838;" ToolTip="{loc:T BrowseFolder}" AutomationProperties.Name="{loc:T BrowseFolder}" Click="OnBrowseDir" />
+                            <TextBox x:Name="DirBox" Style="{StaticResource Field}" />
+                        </DockPanel>
+                        <TextBlock Text="{loc:T FieldArguments}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="ArgsBox" Style="{StaticResource Field}" />
+                        <TextBlock Text="{loc:T HintApplication}" Style="{StaticResource HintText}" Margin="0,10,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Detalles ============================ -->
+            <TabItem x:Name="TabDetails" Header="{loc:T TabDetails}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="{loc:T FieldDisplayName}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="DisplayNameBox" Style="{StaticResource Field}" />
+                        <TextBlock Text="{loc:T FieldDescription}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="DescriptionBox" Style="{StaticResource Field}" AcceptsReturn="False" TextWrapping="Wrap" MinHeight="60" VerticalContentAlignment="Top" />
+                        <TextBlock Text="{loc:T FieldStartup}" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="StartCombo" Style="{StaticResource Combo}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Inicio de sesión ============================ -->
+            <TabItem x:Name="TabLogon" Header="{loc:T TabLogon}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <RadioButton x:Name="AccountSystem" GroupName="Account" Style="{StaticResource Radio}" Content="{loc:T AccountSystem}" Checked="OnAccountChanged" />
+                        <CheckBox x:Name="InteractiveCheck" Style="{StaticResource Check}" Content="{loc:T FieldInteractive}" Margin="24,6,0,0" />
+                        <RadioButton x:Name="AccountLocal" GroupName="Account" Style="{StaticResource Radio}" Content="{loc:T AccountLocalService}" Checked="OnAccountChanged" />
+                        <RadioButton x:Name="AccountNetwork" GroupName="Account" Style="{StaticResource Radio}" Content="{loc:T AccountNetworkService}" Checked="OnAccountChanged" />
+                        <RadioButton x:Name="AccountUser" GroupName="Account" Style="{StaticResource Radio}" Content="{loc:T AccountThis}" Checked="OnAccountChanged" />
+                        <StackPanel x:Name="UserPanel" Margin="24,0,0,0">
+                            <TextBlock Text="{loc:T FieldAccount}" Style="{StaticResource FieldLabel}" />
+                            <TextBox x:Name="AccountBox" Style="{StaticResource Field}" LostFocus="OnFieldLostFocus" />
+                            <StackPanel x:Name="PasswordPanel">
+                                <TextBlock Text="{loc:T FieldPassword}" Style="{StaticResource FieldLabel}" />
+                                <local:RevealPasswordBox xmlns:local="clr-namespace:SocWsManager.App" x:Name="PasswordBox" />
+                                <TextBlock Text="{loc:T PasswordConfirm}" Style="{StaticResource FieldLabel}" />
+                                <local:RevealPasswordBox xmlns:local="clr-namespace:SocWsManager.App" x:Name="PasswordConfirmBox" />
+                            </StackPanel>
+                            <TextBlock x:Name="PasswordHint" Style="{StaticResource HintText}" Margin="0,8,0,0" />
+                        </StackPanel>
+                        <TextBlock Text="{loc:T HintLogon}" Style="{StaticResource HintText}" Margin="0,12,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Dependencias ============================ -->
+            <TabItem x:Name="TabDependencies" Header="{loc:T TabDependencies}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="{loc:T FieldDependServices}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="DependServicesBox" Style="{StaticResource MultiField}" />
+                        <TextBlock Text="{loc:T FieldDependGroups}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="DependGroupsBox" Style="{StaticResource MultiField}" />
+                        <TextBlock Text="{loc:T HintDependencies}" Style="{StaticResource HintText}" Margin="0,10,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Proceso ============================ -->
+            <TabItem x:Name="TabProcess" Header="{loc:T TabProcess}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="{loc:T FieldPriority}" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="PriorityCombo" Style="{StaticResource Combo}" />
+                        <TextBlock Text="{loc:T FieldAffinity}" Style="{StaticResource FieldLabel}" />
+                        <CheckBox x:Name="AllCpusCheck" Style="{StaticResource Check}" Content="{loc:T FieldAllCpus}" Checked="OnAllCpusChanged" Unchecked="OnAllCpusChanged" Margin="0,0,0,6" />
+                        <TextBox x:Name="AffinityBox" Style="{StaticResource Field}" LostFocus="OnFieldLostFocus" />
+                        <TextBlock x:Name="AffinityHint" Style="{StaticResource HintText}" Margin="0,4,0,0" />
+                        <CheckBox x:Name="NoConsoleCheck" Style="{StaticResource Check}" Content="{loc:T FieldNoConsole}" Margin="0,14,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Parada ============================ -->
+            <TabItem x:Name="TabShutdown" Header="{loc:T TabShutdown}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="140" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.ColumnSpan="2" Text="{loc:T HintShutdown}" Style="{StaticResource HintText}" Margin="0,8,0,4" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{loc:T FieldTimeoutMs}" Style="{StaticResource FieldLabel}" VerticalAlignment="Bottom" Visibility="Collapsed" />
+                        <CheckBox x:Name="StopConsoleCheck" Grid.Row="1" Style="{StaticResource Check}" Content="{loc:T FieldStopConsole}" />
+                        <TextBox x:Name="StopConsoleBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource Field}" Margin="0,6,0,0" LostFocus="OnFieldLostFocus" ToolTip="{loc:T FieldTimeoutMs}" />
+                        <CheckBox x:Name="StopWindowCheck" Grid.Row="2" Style="{StaticResource Check}" Content="{loc:T FieldStopWindow}" />
+                        <TextBox x:Name="StopWindowBox" Grid.Row="2" Grid.Column="1" Style="{StaticResource Field}" Margin="0,6,0,0" LostFocus="OnFieldLostFocus" ToolTip="{loc:T FieldTimeoutMs}" />
+                        <CheckBox x:Name="StopThreadsCheck" Grid.Row="3" Style="{StaticResource Check}" Content="{loc:T FieldStopThreads}" />
+                        <TextBox x:Name="StopThreadsBox" Grid.Row="3" Grid.Column="1" Style="{StaticResource Field}" Margin="0,6,0,0" LostFocus="OnFieldLostFocus" ToolTip="{loc:T FieldTimeoutMs}" />
+                        <CheckBox x:Name="StopTerminateCheck" Grid.Row="4" Style="{StaticResource Check}" Content="{loc:T FieldStopTerminate}" />
+                        <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Text="{loc:T HintTimeouts}" Style="{StaticResource HintText}" Margin="0,8,0,0" />
+                        <CheckBox x:Name="KillTreeCheck" Grid.Row="6" Grid.ColumnSpan="2" Style="{StaticResource Check}" Content="{loc:T FieldKillTree}" Margin="0,14,0,0" />
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Acciones de salida ============================ -->
+            <TabItem x:Name="TabExit" Header="{loc:T TabExit}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="{loc:T FieldThrottle}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="ThrottleBox" Style="{StaticResource Field}" Width="160" HorizontalAlignment="Left" LostFocus="OnFieldLostFocus" />
+                        <TextBlock Text="{loc:T FieldDefaultAction}" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="DefaultActionCombo" Style="{StaticResource Combo}" />
+                        <TextBlock Text="{loc:T FieldRestartDelay}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="RestartDelayBox" Style="{StaticResource Field}" Width="160" HorizontalAlignment="Left" LostFocus="OnFieldLostFocus" />
+                        <TextBlock Text="{loc:T FieldExitCodes}" Style="{StaticResource FieldLabel}" Margin="0,16,0,4" />
+                        <StackPanel x:Name="ExitCodesPanel" />
+                        <Button x:Name="AddExitCodeButton" Style="{StaticResource GhostIconButton}" Content="&#xE710;" HorizontalAlignment="Left" ToolTip="{loc:T AddExitCode}" AutomationProperties.Name="{loc:T AddExitCode}" Click="OnAddExitCode" />
+                        <TextBlock Text="{loc:T HintExit}" Style="{StaticResource HintText}" Margin="0,10,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ E/S ============================ -->
+            <TabItem x:Name="TabIo" Header="{loc:T TabIo}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="{loc:T FieldStdin}" Style="{StaticResource FieldLabel}" />
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE8E5;" ToolTip="{loc:T Browse}" AutomationProperties.Name="{loc:T Browse}" Tag="stdin" Click="OnBrowseIo" />
+                            <TextBox x:Name="StdinBox" Style="{StaticResource Field}" />
+                        </DockPanel>
+                        <TextBlock Text="{loc:T FieldStdout}" Style="{StaticResource FieldLabel}" />
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE8E5;" ToolTip="{loc:T Browse}" AutomationProperties.Name="{loc:T Browse}" Tag="stdout" Click="OnBrowseIo" />
+                            <TextBox x:Name="StdoutBox" Style="{StaticResource Field}" />
+                        </DockPanel>
+                        <TextBlock Text="{loc:T FieldStdoutDisposition}" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="StdoutDispositionCombo" Style="{StaticResource Combo}" />
+                        <TextBlock Text="{loc:T FieldStderr}" Style="{StaticResource FieldLabel}" />
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Style="{StaticResource GhostIconButton}" Content="&#xE8E5;" ToolTip="{loc:T Browse}" AutomationProperties.Name="{loc:T Browse}" Tag="stderr" Click="OnBrowseIo" />
+                            <TextBox x:Name="StderrBox" Style="{StaticResource Field}" />
+                        </DockPanel>
+                        <TextBlock Text="{loc:T FieldStderrDisposition}" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="StderrDispositionCombo" Style="{StaticResource Combo}" />
+                        <CheckBox x:Name="TimestampCheck" Style="{StaticResource Check}" Content="{loc:T FieldTimestamp}" Margin="0,14,0,0" />
+                        <TextBlock Text="{loc:T HintIo}" Style="{StaticResource HintText}" Margin="0,10,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Rotación ============================ -->
+            <TabItem x:Name="TabRotation" Header="{loc:T TabRotation}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <CheckBox x:Name="RotateCheck" Style="{StaticResource Check}" Content="{loc:T FieldRotate}" />
+                        <TextBlock Text="{loc:T FieldRotateOnline}" Style="{StaticResource FieldLabel}" />
+                        <ComboBox x:Name="RotateOnlineCombo" Style="{StaticResource Combo}" />
+                        <TextBlock Text="{loc:T FieldRotateSeconds}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="RotateSecondsBox" Style="{StaticResource Field}" Width="200" HorizontalAlignment="Left" LostFocus="OnFieldLostFocus" />
+                        <TextBlock Text="{loc:T FieldRotateBytes}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="RotateBytesBox" Style="{StaticResource Field}" Width="200" HorizontalAlignment="Left" LostFocus="OnFieldLostFocus" />
+                        <TextBlock Text="{loc:T HintRotation}" Style="{StaticResource HintText}" Margin="0,10,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Entorno ============================ -->
+            <TabItem x:Name="TabEnvironment" Header="{loc:T TabEnvironment}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="{loc:T FieldEnvironmentExtra}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="EnvExtraBox" Style="{StaticResource MultiField}" LostFocus="OnFieldLostFocus" />
+                        <TextBlock Text="{loc:T FieldEnvironment}" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="EnvBox" Style="{StaticResource MultiField}" LostFocus="OnFieldLostFocus" />
+                        <TextBlock Text="{loc:T HintEnvironment}" Style="{StaticResource HintText}" Margin="0,10,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================ Ganchos ============================ -->
+            <TabItem x:Name="TabHooks" Header="{loc:T TabHooks}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <StackPanel x:Name="HooksPanel" />
+                        <TextBlock Text="{loc:T HintHooks}" Style="{StaticResource HintText}" Margin="0,10,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

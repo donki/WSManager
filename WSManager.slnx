@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WSManager.App/WSManager.App.csproj" />
+    <Project Path="src/WSManager.Core/WSManager.Core.csproj" />
+    <Project Path="src/WSManager.Host/WSManager.Host.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/WSManager.TestApp/WSManager.TestApp.csproj" />
+    <Project Path="tests/WSManager.Tests/WSManager.Tests.csproj" />
+  </Folder>
+</Solution>

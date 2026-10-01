@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    sOCWSManager.exe: la aplicacion de gestion (WPF): icono en la bandeja con una sola instancia,
+    ventana principal, editor por pestañas, importar, guia, novedades y la linea de ordenes. Toda
+    la logica esta en WSManager.Core; aqui solo la interfaz y lo que la engancha a Windows.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>SocWsManager.App</RootNamespace>
+    <AssemblyName>sOCWSManager</AssemblyName>
+    <ApplicationTitle>sOC WSManager</ApplicationTitle>
+    <ApplicationIcon>appicon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WSManager.Core\WSManager.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\logo.png" />
+  </ItemGroup>
+
+</Project>

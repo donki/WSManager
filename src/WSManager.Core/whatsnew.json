@@ -1,0 +1,20 @@
+[
+  {
+    "version": "2026.10.01.0",
+    "date": "2026-10-01",
+    "es": [
+      "Primera versión: convierte cualquier programa en un servicio de Windows, lo vigila y lo vuelve a arrancar si se cae, con una espera que crece si se cae en bucle.",
+      "Icono junto al reloj con todos tus servicios y su estado: arrancar, parar, pausar, reiniciar, editar, ver su salida y darlos de baja sin abrir nada más.",
+      "Editor por pestañas con todas las opciones: cuenta, dependencias, prioridad y CPU, parada escalonada, qué hacer al salir, ficheros de salida con rotación, entorno y ganchos.",
+      "Importa los servicios que ya tengas hechos con otro gestor de servicios, conservando su configuración, y se puede deshacer.",
+      "Línea de órdenes para scripts con las órdenes de siempre (install, set, get, start, dump…)."
+    ],
+    "en": [
+      "First version: turns any program into a Windows service, watches it and starts it again if it crashes, waiting longer and longer if it crashes in a loop.",
+      "Icon next to the clock with all your services and their state: start, stop, pause, restart, edit, see their output and remove them without opening anything else.",
+      "Tabbed editor with every option: account, dependencies, priority and CPUs, staged stop, what to do on exit, output files with rotation, environment and hooks.",
+      "Imports the services you already made with another service manager, keeping their settings, and it can be undone.",
+      "Command line for scripts with the usual commands (install, set, get, start, dump…)."
+    ]
+  }
+]

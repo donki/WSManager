@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    sOCServiceHost.exe: el ejecutable que va como ImagePath de cada servicio de WSManager (habla con
+    el SCM y vigila la aplicacion) y, con argumentos, la linea de ordenes de consola. NativeAOT: un
+    solo fichero pequeño que arranca al momento.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>SocWsManager.Host</RootNamespace>
+    <AssemblyName>sOCServiceHost</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PublishAot>true</PublishAot>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <ApplicationIcon>..\WSManager.App\appicon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WSManager.Core\WSManager.Core.csproj" />
+  </ItemGroup>
+
+</Project>

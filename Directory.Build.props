@@ -1,0 +1,16 @@
+<Project>
+  <!-- Comun a todos los proyectos: version unica (constitucion 11) y opciones de C#. -->
+  <PropertyGroup>
+    <Version>2026.10.1.0</Version>
+    <AssemblyVersion>2026.10.1.0</AssemblyVersion>
+    <FileVersion>2026.10.1.0</FileVersion>
+    <Company>Socratic</Company>
+    <Product>sOC WSManager</Product>
+    <Copyright>Copyright © 2026 Socratic</Copyright>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+</Project>
