@@ -28,7 +28,7 @@
             </StackPanel>
         </Grid>
 
-        <TabControl x:Name="Tabs" Style="{StaticResource EditorTabs}">
+        <TabControl x:Name="Tabs" Style="{StaticResource EditorTabs}" SelectedIndex="0">
 
             <!-- ============================ Aplicación ============================ -->
             <TabItem x:Name="TabApplication" Header="{loc:T TabApplication}">

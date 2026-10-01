@@ -30,6 +30,7 @@ public sealed class RowView(ServiceRow row)
 public partial class MainWindow : Window
 {
     private IReadOnlyList<ServiceRow> _rows = [];
+    private bool _painted;
 
     public MainWindow()
     {
@@ -68,8 +69,9 @@ public partial class MainWindow : Window
     /// <summary>Pinta la lista conservando la selección (se llama en cada sondeo).</summary>
     public void ShowRows(IReadOnlyList<ServiceRow> rows)
     {
-        if (rows.SequenceEqual(_rows) && ServiceList.Items.Count == rows.Count)
+        if (_painted && rows.SequenceEqual(_rows))
             return;
+        _painted = true;
         var selected = Selected?.Name;
         _rows = rows;
         var views = rows.Select(r => new RowView(r)).ToList();

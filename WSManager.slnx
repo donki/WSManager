@@ -7,5 +7,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/WSManager.TestApp/WSManager.TestApp.csproj" />
     <Project Path="tests/WSManager.Tests/WSManager.Tests.csproj" />
+    <Project Path="tests/WSManager.UITests/WSManager.UITests.csproj" />
   </Folder>
 </Solution>

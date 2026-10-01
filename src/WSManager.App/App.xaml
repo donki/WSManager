@@ -347,7 +347,8 @@
                             <DockPanel>
                                 <WrapPanel DockPanel.Dock="Top" IsItemsHost="True" Margin="0,0,0,8" />
                                 <Border Style="{StaticResource Card}" Padding="18,8,18,16">
-                                    <ContentPresenter ContentSource="SelectedContent" />
+                                    <!-- Con este nombre UI Automation (y los lectores de pantalla) ve el contenido de la pestaña. -->
+                                    <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
                                 </Border>
                             </DockPanel>
                         </ControlTemplate>
