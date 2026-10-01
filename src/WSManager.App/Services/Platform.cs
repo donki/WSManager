@@ -48,6 +48,7 @@ public static class ThemeManager
             Set(r, "WarningSurface", "#33291A");
             Set(r, "SelectionSurface", "#2E2A55");
             Set(r, "PrimaryLight", "#8F88FF");
+            Set(r, "PrimaryText", "#A9A3FF");
         }
         else
         {
@@ -59,6 +60,7 @@ public static class ThemeManager
             Set(r, "WarningSurface", "#FFF4E5");
             Set(r, "SelectionSurface", "#E4E1FF");
             Set(r, "PrimaryLight", "#635BF2");
+            Set(r, "PrimaryText", "#3525CD");
         }
     }
 

@@ -60,7 +60,13 @@ public sealed class NssmImport(IServiceManager scm, IRegistry registry, Func<str
     }
 
     /// <summary>Pasa el servicio a WSManager. Lanza <see cref="ImportException"/> si no se puede.</summary>
-    public void Import(string name, string hostImagePath)
+    /// <summary>
+    /// Pasa el servicio a WSManager. Lanza <see cref="ImportException"/> si no se puede. Con
+    /// <paramref name="restartRunning"/> en falso (la importación automática por defecto) uno que
+    /// está en marcha no se toca: el cambio vale desde su próximo arranque (el del equipo, por
+    /// ejemplo), que es el momento de menos riesgo. Devuelve si quedó pendiente de ese arranque.
+    /// </summary>
+    public bool Import(string name, string hostImagePath, bool restartRunning = true)
     {
         var image = registry.GetString(name, Names.ImagePath);
         if (image is null)
@@ -72,11 +78,18 @@ public sealed class NssmImport(IServiceManager scm, IRegistry registry, Func<str
         if ((registry.GetString(Names.Parameters(name), Names.Application) ?? string.Empty).Trim().Length == 0)
             throw new ImportException("ImportNotImportable", name);
 
+        if (!restartRunning && scm.Status(name).State != ServiceState.Stopped)
+        {
+            registry.Set(Names.Parameters(name), Names.ImportedFrom, RegValue.Expand(image));
+            scm.ChangeImagePath(name, hostImagePath);
+            return true;
+        }
         var wasRunning = StopIfRunning(name);
         registry.Set(Names.Parameters(name), Names.ImportedFrom, RegValue.Expand(image));
         scm.ChangeImagePath(name, hostImagePath);
         if (wasRunning)
             StartAgain(name);
+        return false;
     }
 
     /// <summary>Vuelve al ejecutable original (RF-42).</summary>

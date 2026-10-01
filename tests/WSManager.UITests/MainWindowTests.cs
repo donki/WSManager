@@ -175,4 +175,22 @@ public sealed class MainWindowTests
         Assert.True(app.WaitRow("Heredado"), "el importado no sale en la lista");
         Assert.Contains(@"C:\srv\log.txt", app.Registry());   // conserva sus parámetros
     }
+
+    [Fact]
+    public void Importacion_automatica_se_activa_y_se_desactiva()
+    {
+        using var app = WsmApp.Launch();
+        WsmApp.Press(app.Button(app.Main, "ImportButton"));
+        var import = app.WaitModal();
+        Assert.False(app.ById(import, "AutoImportCheck").AsCheckBox().IsChecked);
+        Assert.False(app.ById(import, "AutoImportRestartCheck").IsEnabled);
+        app.ById(import, "AutoImportCheck").AsCheckBox().Patterns.Toggle.Pattern.Toggle();
+        Assert.True(Retry.WhileFalse(() => app.ById(import, "AutoImportRestartCheck").IsEnabled, WsmApp.Timeout).Result, "no se activa");
+        Assert.True(app.ById(import, "AutoImportCheck").AsCheckBox().IsChecked);
+        app.Capture(import, "activada");
+        app.ById(import, "AutoImportCheck").AsCheckBox().Patterns.Toggle.Pattern.Toggle();
+        Assert.True(Retry.WhileFalse(() => !app.ById(import, "AutoImportRestartCheck").IsEnabled, WsmApp.Timeout).Result, "no se desactiva");
+        WsmApp.Press(app.Button(import, "CloseButton"));
+        app.WaitNoModal();
+    }
 }

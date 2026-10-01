@@ -87,7 +87,9 @@ public static partial class Loc
             "  set <service> <parameter> [<subparameter>] <value>...   (lists: +add -remove :replace)\n" +
             "  reset <service> <parameter> [<subparameter>]\n" +
             "  processes <service>     list [all]     dump <service> [<new name>]\n" +
-            "  import-nssm [list | all | <service>...] [confirm]     undo-import <service> [confirm]\n" +
+            "  import [list | --all | <service>...] [confirm]  bring services of another service manager (keeps their settings)\n" +
+            "  undo-import <service> [confirm]                 give one back to the other service manager\n" +
+            "  auto-import on [--restart] | off | status | run import them automatically (a scheduled task, as SYSTEM)\n" +
             "  setup                                           install the service component in Program Files\n" +
             "  debug <service>                                 run the supervision in this console (Ctrl+C stops)\n" +
             "  help | version\n\n" +
@@ -167,6 +169,12 @@ public static partial class Loc
         ["ImportNotNssm"] = "{0} is not a service of the other service manager.",
         ["ImportNotImportable"] = "{0} cannot be imported: it has no Application.",
         ["UndoDone"] = "{0} is managed again by the other service manager.",
+        ["ImportDonePending"] = "{0} is now a WSManager service; it was running, so WSManager takes over the next time it starts (for example when the PC restarts).",
+        ["AutoImportOn"] = "Automatic import is on: every 15 minutes and when the PC starts, services of another service manager are imported; the running ones take over at their next start.",
+        ["AutoImportOnRestart"] = "Automatic import is on: every 15 minutes and when the PC starts, services of another service manager are imported, and the running ones are restarted right away.",
+        ["AutoImportOff"] = "Automatic import is off.",
+        ["AutoImportNotEnabled"] = "Automatic import is not on. Turn it on with: auto-import on",
+        ["CliUsage_autoimport"] = "Usage: auto-import on [--restart] | off | status | run",
         ["UndoNotImported"] = "{0} was not imported, so there is nothing to undo.",
         ["UndoOriginalMissing"] = "{0} no longer exists: the import cannot be undone. Nothing was changed.",
     };
@@ -207,7 +215,9 @@ public static partial class Loc
             "  set <servicio> <parámetro> [<subparámetro>] <valor>...   (listas: +añadir -quitar :sustituir)\n" +
             "  reset <servicio> <parámetro> [<subparámetro>]\n" +
             "  processes <servicio>     list [all]     dump <servicio> [<nombre nuevo>]\n" +
-            "  import-nssm [list | all | <servicio>...] [confirm]     undo-import <servicio> [confirm]\n" +
+            "  import [list | --all | <servicio>...] [confirm]     traer servicios de otro gestor de servicios (conserva su configuración)\n" +
+            "  undo-import <servicio> [confirm]                    devolver uno al otro gestor de servicios\n" +
+            "  auto-import on [--restart] | off | status | run     importarlos automáticamente (una tarea programada, como SYSTEM)\n" +
             "  setup                                               instalar el componente de servicio en Archivos de programa\n" +
             "  debug <servicio>                                    vigilar en esta consola (Ctrl+C para)\n" +
             "  help | version\n\n" +
@@ -285,6 +295,12 @@ public static partial class Loc
         ["ImportNotNssm"] = "{0} no es un servicio del otro gestor de servicios.",
         ["ImportNotImportable"] = "{0} no se puede importar: no tiene Application.",
         ["UndoDone"] = "{0} vuelve a gestionarlo el otro gestor de servicios.",
+        ["ImportDonePending"] = "{0} ya es un servicio de WSManager; estaba en marcha, así que WSManager toma el relevo la próxima vez que arranque (por ejemplo al reiniciar el PC).",
+        ["AutoImportOn"] = "Importación automática activada: cada 15 minutos y al arrancar el PC se importan los servicios de otro gestor de servicios; los que estén en marcha pasan a WSManager en su próximo arranque.",
+        ["AutoImportOnRestart"] = "Importación automática activada: cada 15 minutos y al arrancar el PC se importan los servicios de otro gestor de servicios, y los que estén en marcha se reinician en el acto.",
+        ["AutoImportOff"] = "Importación automática desactivada.",
+        ["AutoImportNotEnabled"] = "La importación automática no está activada. Actívala con: auto-import on",
+        ["CliUsage_autoimport"] = "Uso: auto-import on [--restart] | off | status | run",
         ["UndoNotImported"] = "{0} no se importó, así que no hay nada que deshacer.",
         ["UndoOriginalMissing"] = "{0} ya no existe: no se puede deshacer la importación. No se ha cambiado nada.",
     };

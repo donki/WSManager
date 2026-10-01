@@ -46,6 +46,9 @@ public sealed class CliContext
     public string StateFolder { get; init; } = StateFile.DefaultFolder;
     public Func<string, bool> FileExists { get; init; } = File.Exists;
 
+    /// <summary>El programador de tareas de la importación automática.</summary>
+    public ITaskScheduler Scheduler { get; init; } = new SchtasksScheduler();
+
     /// <summary>Árbol de procesos para <c>processes</c> (las pruebas lo cambian).</summary>
     public Func<IReadOnlyList<ProcessNode>> Snapshot { get; init; } = ProcessTree.Snapshot;
 }
@@ -119,8 +122,10 @@ public sealed class CliRunner(CliContext ctx)
                 return List(c.Args.Count == 1);
             case "install":
                 return Install(c);
-            case "import-nssm":
+            case "import":
                 return ImportNssm(c.Args);
+            case "auto-import":
+                return AutoImportCommand(c.Args);
             case "undo-import":
                 return UndoImport(c.Service!, c.Args.Count == 1);
         }
@@ -457,13 +462,25 @@ public sealed class CliRunner(CliContext ctx)
 
     private NssmImport Importer() => new(Scm, Reg, ctx.FileExists) { Timeout = ctx.WaitTimeout, Sleep = ctx.Sleep };
 
+    private static bool Flag(IReadOnlyList<string> args, params string[] names) =>
+        args.Any(a => names.Any(n => a.Equals(n, StringComparison.OrdinalIgnoreCase)));
+
+    /// <summary>
+    /// <c>import [list | --all | all | &lt;servicio&gt;…] [confirm] [--auto] [--restart]</c>. Con
+    /// <c>--auto</c> (la tarea de la importación automática) no se pregunta, un fallo no para a los
+    /// demás (se reintenta en la próxima vuelta) y los que están en marcha solo se reinician con
+    /// <c>--restart</c>.
+    /// </summary>
     private int ImportNssm(IReadOnlyList<string> args)
     {
         var importer = Importer();
         var candidates = importer.Candidates();
-        var confirmed = args.Any(a => a.Equals("confirm", StringComparison.OrdinalIgnoreCase));
-        var names = args.Where(a => !a.Equals("confirm", StringComparison.OrdinalIgnoreCase)).ToList();
-        if (names.Count == 0 || (names.Count == 1 && names[0].Equals("list", StringComparison.OrdinalIgnoreCase)))
+        var auto = Flag(args, "--auto");
+        var confirmed = auto || Flag(args, "confirm");
+        var restart = !auto || Flag(args, "--restart");
+        var names = args.Where(a => !(a.Equals("confirm", StringComparison.OrdinalIgnoreCase) || a.StartsWith("--", StringComparison.Ordinal))).ToList();
+        var all = Flag(args, "--all") || (names.Count == 1 && names[0].Equals("all", StringComparison.OrdinalIgnoreCase));
+        if (!all && (names.Count == 0 || (names.Count == 1 && names[0].Equals("list", StringComparison.OrdinalIgnoreCase))))
         {
             if (candidates.Count == 0)
                 ctx.Out.WriteLine(Loc.Get("ImportNone"));
@@ -471,9 +488,7 @@ public sealed class CliRunner(CliContext ctx)
                 ctx.Out.WriteLine($"{cand.Name}\t{StateName(cand.State)}\t{(cand.Importable ? cand.Application : Loc.Get("ImportNotImportableShort"))}");
             return ExitCodes.Ok;
         }
-        var chosen = names.Count == 1 && names[0].Equals("all", StringComparison.OrdinalIgnoreCase)
-            ? candidates.Where(cand => cand.Importable).Select(cand => cand.Name).ToList()
-            : names;
+        var chosen = all ? candidates.Where(cand => cand.Importable).Select(cand => cand.Name).ToList() : names;
         if (chosen.Count == 0)
         {
             ctx.Out.WriteLine(Loc.Get("ImportNone"));
@@ -490,16 +505,52 @@ public sealed class CliRunner(CliContext ctx)
         {
             try
             {
-                importer.Import(name, image);
-                ctx.Out.WriteLine(Loc.Format("ImportDone", name));
+                var pending = importer.Import(name, image, restart);
+                ctx.Out.WriteLine(Loc.Format(pending ? "ImportDonePending" : "ImportDone", name));
             }
             catch (ImportException ex)
             {
                 ctx.Err.WriteLine(Loc.Format(ex.Key, ex.Arg));
                 result = ExitCodes.Error;
             }
+            catch (ScmException ex) when (auto)
+            {
+                ctx.Err.WriteLine(Messages.Scm(ex, name));
+                result = ExitCodes.Error;
+            }
         }
         return result;
+    }
+
+    /// <summary><c>auto-import on [--restart] | off | status | run</c> (RF-44).</summary>
+    private int AutoImportCommand(IReadOnlyList<string> args)
+    {
+        var auto = new AutoImport(ctx.Scheduler);
+        switch (args[0].ToLowerInvariant())
+        {
+            case "on":
+                var restart = Flag(args, "--restart");
+                auto.Enable(ctx.Deployer.EnsureInstalled(), restart);
+                ctx.Out.WriteLine(Loc.Get(restart ? "AutoImportOnRestart" : "AutoImportOn"));
+                auto.RunNow();
+                return ExitCodes.Ok;
+            case "off":
+                auto.Disable();
+                ctx.Out.WriteLine(Loc.Get("AutoImportOff"));
+                return ExitCodes.Ok;
+            case "run":
+                if (!auto.Status().Enabled)
+                {
+                    ctx.Err.WriteLine(Loc.Get("AutoImportNotEnabled"));
+                    return ExitCodes.Error;
+                }
+                auto.RunNow();
+                return ExitCodes.Ok;
+            default:
+                var (enabled, restartRunning) = auto.Status();
+                ctx.Out.WriteLine(Loc.Get(!enabled ? "AutoImportOff" : restartRunning ? "AutoImportOnRestart" : "AutoImportOn"));
+                return ExitCodes.Ok;
+        }
     }
 
     private int UndoImport(string name, bool confirmed)

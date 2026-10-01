@@ -137,13 +137,13 @@
                         </Grid.RowDefinitions>
                         <TextBlock Grid.ColumnSpan="2" Text="{loc:T HintShutdown}" Style="{StaticResource HintText}" Margin="0,8,0,4" />
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{loc:T FieldTimeoutMs}" Style="{StaticResource FieldLabel}" VerticalAlignment="Bottom" Visibility="Collapsed" />
-                        <CheckBox x:Name="StopConsoleCheck" Grid.Row="1" Style="{StaticResource Check}" Content="{loc:T FieldStopConsole}" />
+                        <CheckBox x:Name="StopConsoleCheck" Grid.Row="1" Style="{StaticResource Check}" AutomationProperties.Name="{loc:T FieldStopConsole}"><TextBlock Text="{loc:T FieldStopConsole}" /></CheckBox>
                         <TextBox x:Name="StopConsoleBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource Field}" Margin="0,6,0,0" LostFocus="OnFieldLostFocus" ToolTip="{loc:T FieldTimeoutMs}" />
-                        <CheckBox x:Name="StopWindowCheck" Grid.Row="2" Style="{StaticResource Check}" Content="{loc:T FieldStopWindow}" />
+                        <CheckBox x:Name="StopWindowCheck" Grid.Row="2" Style="{StaticResource Check}" AutomationProperties.Name="{loc:T FieldStopWindow}"><TextBlock Text="{loc:T FieldStopWindow}" /></CheckBox>
                         <TextBox x:Name="StopWindowBox" Grid.Row="2" Grid.Column="1" Style="{StaticResource Field}" Margin="0,6,0,0" LostFocus="OnFieldLostFocus" ToolTip="{loc:T FieldTimeoutMs}" />
-                        <CheckBox x:Name="StopThreadsCheck" Grid.Row="3" Style="{StaticResource Check}" Content="{loc:T FieldStopThreads}" />
+                        <CheckBox x:Name="StopThreadsCheck" Grid.Row="3" Style="{StaticResource Check}" AutomationProperties.Name="{loc:T FieldStopThreads}"><TextBlock Text="{loc:T FieldStopThreads}" /></CheckBox>
                         <TextBox x:Name="StopThreadsBox" Grid.Row="3" Grid.Column="1" Style="{StaticResource Field}" Margin="0,6,0,0" LostFocus="OnFieldLostFocus" ToolTip="{loc:T FieldTimeoutMs}" />
-                        <CheckBox x:Name="StopTerminateCheck" Grid.Row="4" Style="{StaticResource Check}" Content="{loc:T FieldStopTerminate}" />
+                        <CheckBox x:Name="StopTerminateCheck" Grid.Row="4" Style="{StaticResource Check}" AutomationProperties.Name="{loc:T FieldStopTerminate}"><TextBlock Text="{loc:T FieldStopTerminate}" /></CheckBox>
                         <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Text="{loc:T HintTimeouts}" Style="{StaticResource HintText}" Margin="0,8,0,0" />
                         <CheckBox x:Name="KillTreeCheck" Grid.Row="6" Grid.ColumnSpan="2" Style="{StaticResource Check}" Content="{loc:T FieldKillTree}" Margin="0,14,0,0" />
                     </Grid>

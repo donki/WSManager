@@ -22,6 +22,22 @@ public static class WsmContext
     public static IRegistry Registry { get; private set; } = WinRegistry.Services();
     public static IHostDeployer Deployer { get; private set; } = new HostDeployer();
     public static string StateFolder { get; private set; } = StateFile.DefaultFolder;
+    public static SocWsManager.Import.ITaskScheduler Scheduler { get; private set; } = new SocWsManager.Import.SchtasksScheduler();
+
+    /// <summary>Lo último que se sabe de la importación automática (leerlo lanza schtasks: no en cada sondeo).</summary>
+    public static (bool Enabled, bool RestartRunning) AutoImportState { get; private set; }
+
+    public static void RefreshAutoImportState()
+    {
+        try
+        {
+            AutoImportState = new SocWsManager.Import.AutoImport(Scheduler).Status();
+        }
+        catch (Exception ex)
+        {
+            AppLog.Write($"estado de la importación automática: {ex.Message}");
+        }
+    }
     public static AppSettings Settings { get; private set; } = new();
     public static ServiceListModel List { get; private set; } = null!;
 
@@ -42,6 +58,7 @@ public static class WsmContext
             Scm = new SandboxServiceManager(reg);
             Deployer = new SandboxDeployer();
             StateFolder = Path.Combine(Sandbox.Folder!, "state");
+            Scheduler = new SocWsManager.Import.MemoryScheduler();
             Elevated = true;
         }
         else
@@ -62,6 +79,7 @@ public static class WsmContext
         Ui = ui,
         StateFolder = StateFolder,
         Rights = Sandbox.IsOn ? new NoRights() : new LsaRightsGranter(),
+        Scheduler = Scheduler,
     };
 
     private sealed class SandboxDeployer : IHostDeployer

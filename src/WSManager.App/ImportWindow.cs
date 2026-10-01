@@ -49,6 +49,7 @@ public sealed class ImportWindow : Window
         var content = new StackPanel();
         content.Children.Add(Card(Loc.Get("ImportCandidatesTitle"), Loc.Get("ImportIntro"), _candidates));
         content.Children.Add(Card(Loc.Get("ImportedTitle"), Loc.Get("ImportedIntro"), _imported));
+        content.Children.Add(Card(Loc.Get("AutoImportTitle"), Loc.Get("AutoImportHint"), AutoImportPanel()));
 
         var root = new DockPanel { Margin = new Thickness(16) };
         DockPanel.SetDock(buttons, Dock.Bottom);
@@ -56,6 +57,53 @@ public sealed class ImportWindow : Window
         root.Children.Add(new ScrollViewer { Content = content, VerticalScrollBarVisibility = ScrollBarVisibility.Auto });
         Content = root;
         Loaded += (_, _) => Reload();
+    }
+
+    private readonly CheckBox _auto = new();
+    private readonly CheckBox _autoRestart = new();
+    private bool _loadingAuto;
+
+    /// <summary>Petición de Josep del 2026-10-01: importar solos los servicios del otro gestor (RF-44).</summary>
+    private StackPanel AutoImportPanel()
+    {
+        _auto.Style = (Style)FindResource("Check");
+        _auto.Content = Loc.Get("AutoImportCheck");
+        AutomationProperties.SetAutomationId(_auto, "AutoImportCheck");
+        _autoRestart.Style = (Style)FindResource("Check");
+        _autoRestart.Content = new TextBlock { Text = Loc.Get("AutoImportRestartCheck"), TextWrapping = TextWrapping.Wrap, Foreground = (Brush)FindResource("TextPrimary") };
+        _autoRestart.Margin = new Thickness(24, 6, 0, 0);
+        AutomationProperties.SetAutomationId(_autoRestart, "AutoImportRestartCheck");
+        AutomationProperties.SetName(_autoRestart, Loc.Get("AutoImportRestartCheck"));
+        // Checked/Unchecked y no Click: así vale también el teclado y la automatización de UI.
+        _auto.Checked += async (_, _) => await ApplyAutoImportAsync();
+        _auto.Unchecked += async (_, _) => await ApplyAutoImportAsync();
+        _autoRestart.Checked += async (_, _) => await ApplyAutoImportAsync();
+        _autoRestart.Unchecked += async (_, _) => await ApplyAutoImportAsync();
+        LoadAutoImport();
+        return new StackPanel { Children = { _auto, _autoRestart } };
+    }
+
+    private void LoadAutoImport()
+    {
+        _loadingAuto = true;
+        WsmContext.RefreshAutoImportState();
+        var (enabled, restart) = WsmContext.AutoImportState;
+        _auto.IsChecked = enabled;
+        _autoRestart.IsChecked = restart;
+        _autoRestart.IsEnabled = enabled;
+        _loadingAuto = false;
+    }
+
+    private async Task ApplyAutoImportAsync()
+    {
+        if (_loadingAuto)
+            return;
+        List<string> command = _auto.IsChecked == true
+            ? ["auto-import", "on", .. (_autoRestart.IsChecked == true ? new[] { "--restart" } : [])]
+            : ["auto-import", "off"];
+        await ServiceActions.Run(this, [command], "StatusAutoImport", null);
+        LoadAutoImport();
+        Reload();
     }
 
     private Border Card(string title, string intro, UIElement body)

@@ -84,6 +84,7 @@ public partial class App : Application
         else
             ShutdownMode = ShutdownMode.OnMainWindowClose;   // sin bandeja, cerrar la ventana cierra la prueba
         StartRefresh();
+        Task.Run(WsmContext.RefreshAutoImportState);
 
         var size = args.FindIndex(a => a == "--size");
         if (!args.Contains("--tray") || Sandbox.IsOn)
@@ -207,6 +208,29 @@ public partial class App : Application
         _tray.SetTip(Loc.Format("TrayTip", rows.Count, rows.Count(r => r.State == ServiceState.Running)));
         foreach (var name in unexpected)
             _tray.Notify(Loc.Get("TrayStoppedTitle"), Loc.Format("TrayStoppedText", name));
+        if (WsmContext.List.NewlyImported.Count > 0)
+            _tray.Notify(Loc.Get("TrayImportedTitle"), Loc.Format("TrayImportedText", string.Join(", ", WsmContext.List.NewlyImported)));
+        RunAutoImportIfNeeded();
+    }
+
+    private DateTime _lastAutoImportRun = DateTime.MinValue;
+
+    /// <summary>
+    /// Con la importación automática activada, un servicio nuevo del otro gestor no espera a la
+    /// próxima vuelta de la tarea: se lanza ya (sin elevar: la tarea lo permite), como mucho una
+    /// vez por minuto.
+    /// </summary>
+    private void RunAutoImportIfNeeded()
+    {
+        if (!WsmContext.AutoImportState.Enabled || WsmContext.List.NssmServices.Count == 0
+            || DateTime.UtcNow - _lastAutoImportRun < TimeSpan.FromMinutes(1))
+            return;
+        _lastAutoImportRun = DateTime.UtcNow;
+        Task.Run(() =>
+        {
+            try { new SocWsManager.Import.AutoImport(WsmContext.Scheduler).RunNow(); }
+            catch (Exception ex) { AppLog.Write($"lanzar la importación automática: {ex.Message}"); }
+        });
     }
 
     private ContextMenu BuildTrayMenu()

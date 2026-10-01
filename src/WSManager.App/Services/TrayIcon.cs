@@ -158,7 +158,7 @@ public sealed class TrayIcon : IDisposable
                 Text = glyph,
                 FontFamily = (FontFamily)Application.Current.FindResource("IconFont"),
                 FontSize = 14,
-                Foreground = (Brush)Application.Current.FindResource(danger ? "Danger" : "Primary"),
+                Foreground = (Brush)Application.Current.FindResource(danger ? "Danger" : "PrimaryText"),
             },
         };
         item.Click += (_, _) => action();

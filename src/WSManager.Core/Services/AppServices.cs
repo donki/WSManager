@@ -178,6 +178,14 @@ public sealed class ServiceListModel(IServiceManager scm, IRegistry registry, st
 
     public IReadOnlyList<ServiceRow> Rows { get; private set; } = [];
 
+    /// <summary>Servicios del otro gestor que hay ahora mismo (para la importación automática).</summary>
+    public IReadOnlyList<string> NssmServices { get; private set; } = [];
+
+    /// <summary>Los que han pasado a WSManager por importación desde la vuelta anterior (no en la primera).</summary>
+    public IReadOnlyList<string> NewlyImported { get; private set; } = [];
+
+    private HashSet<string>? _imported;
+
     /// <summary>Se avisa de que se va a parar (o dar de baja) desde la aplicación: no es una parada inesperada.</summary>
     public void ExpectStop(string name) => _expected[name] = DateTime.UtcNow;
 
@@ -185,9 +193,12 @@ public sealed class ServiceListModel(IServiceManager scm, IRegistry registry, st
     public IReadOnlyList<string> Refresh()
     {
         var rows = new List<ServiceRow>();
+        var nssm = new List<string>();
         foreach (var e in scm.Enumerate())
         {
             var image = registry.GetString(e.Name, Names.ImagePath);
+            if (NssmImport.IsNssm(image))
+                nssm.Add(e.Name);
             if (!NssmImport.IsOurs(image))
                 continue;
             var c = new ServiceConfig { Name = e.Name };
@@ -202,6 +213,10 @@ public sealed class ServiceListModel(IServiceManager scm, IRegistry registry, st
                 registry.GetString(p, Names.ImportedFrom) is { Length: > 0 }));
         }
         Rows = [.. rows.OrderBy(r => r.DisplayName, StringComparer.CurrentCultureIgnoreCase)];
+        NssmServices = nssm;
+        var importedNow = Rows.Where(r => r.Imported).Select(r => r.DisplayName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        NewlyImported = _imported is null ? [] : [.. importedNow.Where(n => !_imported.Contains(n))];
+        _imported = importedNow;
 
         var unexpected = new List<string>();
         foreach (var row in Rows)

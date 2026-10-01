@@ -187,6 +187,23 @@ Piezas:
 - **RF-43** Un servicio que el original habría rechazado (sin `Application`) se enseña como «no
   importable» y no se toca.
 
+#### Importación automática (petición de Josep, 2026-10-01)
+
+- **RF-44** Interruptor «Importar automáticamente los servicios de otro gestor de servicios»
+  (apagado por defecto) en la ventana de importar, y `auto-import on [--restart] | off | status | run`
+  en la línea de órdenes. Activarlo pide UAC **una vez**.
+- **RF-45** Con él activado, al arrancar el equipo y cada 15 minutos se importan solos (sin
+  confirmar uno a uno) los servicios cuyo `ImagePath` apunta a `nssm.exe`, conservando todos sus
+  parámetros. Un fallo con uno no para a los demás y se reintenta en la siguiente vuelta.
+- **RF-46** Los que están **en marcha** no se tocan por defecto: el cambio vale desde su próximo
+  arranque (normalmente el del equipo), el momento de menos riesgo. Con «Reiniciar en el acto»
+  (`--restart`) se paran y se vuelven a arrancar como en la importación manual.
+- **RF-47** Si la aplicación de la bandeja ve un servicio nuevo del otro gestor, lanza la importación
+  sin esperar a la vuelta (como mucho una vez por minuto), y avisa con un globo de lo importado. Se
+  deshace igual que la manual.
+- La orden `import [list | --all | <servicio>…] [confirm]` (con `import-nssm` como sinónimo) es la
+  de la importación manual; la tarea usa `import --all --auto [--restart]`.
+
 ### 3.5 Privilegios
 
 - **RF-50** La aplicación de la bandeja corre **sin elevar**. Leer la lista y el estado no pide

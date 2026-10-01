@@ -127,6 +127,7 @@ public sealed class Cli
     public SandboxServiceManager Scm { get; }
     public FakeDeployer Deployer { get; } = new();
     public FakeRights Rights { get; } = new();
+    public SocWsManager.Import.MemoryScheduler Scheduler { get; } = new();
     public FakeUi? Ui { get; set; }
     public StringWriter Out { get; private set; } = new();
     public StringWriter Err { get; private set; } = new();
@@ -149,6 +150,7 @@ public sealed class Cli
         StateFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "wsm-tests-state"),
         FileExists = f => Files.Contains(f) || System.IO.File.Exists(f),
         Snapshot = () => Processes,
+        Scheduler = Scheduler,
     };
 
     public CliRunner Runner() => new(Context());

@@ -17,7 +17,7 @@ public static class CliParser
     public static readonly IReadOnlyList<string> Verbs =
     [
         "install", "remove", "edit", "start", "stop", "restart", "pause", "continue", "status", "statuscode", "rotate",
-        "get", "set", "reset", "processes", "list", "dump", "import-nssm", "undo-import", "setup", "help", "version",
+        "get", "set", "reset", "processes", "list", "dump", "import", "import-nssm", "auto-import", "undo-import", "setup", "help", "version",
     ];
 
     /// <summary>Si los argumentos son una orden de la línea de órdenes (y no opciones de la aplicación).</summary>
@@ -65,7 +65,13 @@ public static class CliParser
                 if (rest.Count is 0 or > 2)
                     return Usage(verb);
                 return new CliParse(new CliCommand(verb, rest[0], After(1)));
+            case "import":
             case "import-nssm":
+                return new CliParse(new CliCommand("import", null, rest));
+            case "auto-import":
+                if (rest.Count == 0 || !(rest[0].ToLowerInvariant() is "on" or "off" or "status" or "run")
+                    || rest.Skip(1).Any(a => !a.Equals("--restart", StringComparison.OrdinalIgnoreCase)))
+                    return Usage(verb);
                 return new CliParse(new CliCommand(verb, null, rest));
             case "undo-import":
                 if (rest.Count is 0 or > 2 || (rest.Count == 2 && !rest[1].Equals("confirm", StringComparison.OrdinalIgnoreCase)))

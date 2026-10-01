@@ -13,6 +13,8 @@
 
             <!-- ============================ Paleta ============================ -->
             <SolidColorBrush x:Key="Primary" Color="#3525CD" />
+            <!-- Indigo para texto e iconos sobre superficie: en oscuro, mas claro para que se lea (contraste). -->
+            <SolidColorBrush x:Key="PrimaryText" Color="#3525CD" />
             <SolidColorBrush x:Key="PrimaryLight" Color="#635BF2" />
             <SolidColorBrush x:Key="Accent" Color="#4F46E5" />
             <SolidColorBrush x:Key="OnPrimary" Color="#FFFFFF" />
@@ -47,7 +49,7 @@
             <Style x:Key="CardTitle" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="17" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Foreground" Value="{DynamicResource Primary}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
             </Style>
 
             <Style x:Key="HintText" TargetType="TextBlock">
@@ -107,7 +109,7 @@
 
             <Style x:Key="GhostIconButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
                 <Setter Property="Background" Value="Transparent" />
-                <Setter Property="Foreground" Value="{DynamicResource Primary}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
             </Style>
 
             <Style x:Key="DangerIconButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
@@ -124,14 +126,14 @@
                 <Setter Property="FontSize" Value="13" />
                 <Setter Property="MinHeight" Value="36" />
                 <Setter Property="Padding" Value="16,6" />
-                <Setter Property="Foreground" Value="{DynamicResource Primary}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Cursor" Value="Hand" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="Bd" Background="{TemplateBinding Background}"
-                                    BorderBrush="{DynamicResource Primary}" BorderThickness="1" CornerRadius="10">
+                                    BorderBrush="{DynamicResource PrimaryText}" BorderThickness="1" CornerRadius="10">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                                                   Margin="{TemplateBinding Padding}" />
                             </Border>
@@ -154,7 +156,7 @@
                 <Setter Property="Width" Value="36" />
                 <Setter Property="Height" Value="36" />
                 <Setter Property="Margin" Value="2,0" />
-                <Setter Property="Foreground" Value="{DynamicResource Primary}" />
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Cursor" Value="Hand" />
@@ -325,7 +327,7 @@
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Primary}" />
                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBackground}" />
-                                    <Setter Property="Foreground" Value="{DynamicResource Primary}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryText}" />
                                 </Trigger>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBackground}" />

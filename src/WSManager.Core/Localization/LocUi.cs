@@ -246,6 +246,13 @@ public static partial class Loc
         ["ImportedIntro"] = "You can give them back to the other service manager while its program is still on this PC.",
         ["ImportedNone"] = "None imported.",
         ["UndoImport"] = "Undo the import",
+        ["AutoImportTitle"] = "Automatic import",
+        ["AutoImportCheck"] = "Import services of another service manager automatically",
+        ["AutoImportRestartCheck"] = "Restart right away the ones that are running (if not, WSManager takes over at their next start)",
+        ["AutoImportHint"] = "Turning it on asks for administrator permission once: it creates a scheduled task that runs as SYSTEM when the PC starts and every 15 minutes, imports and ends. Nothing stays running with privileges. Each import shows a notification, and it can be undone above.",
+        ["TrayImportedTitle"] = "Services imported",
+        ["TrayImportedText"] = "WSManager now manages {0}. You can undo it in Import.",
+        ["StatusAutoImport"] = "Automatic import changed.",
 
         // guía
         ["GuideTitle"] = "Setup guide",
@@ -508,6 +515,13 @@ public static partial class Loc
         ["ImportedIntro"] = "Puedes devolverlos al otro gestor de servicios mientras su programa siga en este PC.",
         ["ImportedNone"] = "Ninguno importado.",
         ["UndoImport"] = "Deshacer la importación",
+        ["AutoImportTitle"] = "Importación automática",
+        ["AutoImportCheck"] = "Importar automáticamente los servicios de otro gestor de servicios",
+        ["AutoImportRestartCheck"] = "Reiniciar en el acto los que estén en marcha (si no, WSManager toma el relevo en su próximo arranque)",
+        ["AutoImportHint"] = "Activarla pide permiso de administrador una vez: crea una tarea programada que se ejecuta como SYSTEM al arrancar el PC y cada 15 minutos, importa y acaba. No queda nada en marcha con privilegios. Cada importación sale en un aviso, y se puede deshacer arriba.",
+        ["TrayImportedTitle"] = "Servicios importados",
+        ["TrayImportedText"] = "WSManager ya gestiona {0}. Se puede deshacer en Importar.",
+        ["StatusAutoImport"] = "Importación automática cambiada.",
 
         ["GuideTitle"] = "Guía de configuración",
         ["GuideStep"] = "Paso {0} de {1}",
