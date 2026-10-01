@@ -368,4 +368,40 @@ public sealed class IntegrationTests
         }
         Assert.False(scm.Exists(name));
     }
+
+    /// <summary>Importar de verdad: un servicio de prueba cuyo ejecutable se llama nssm.exe (una copia del programa de prueba).</summary>
+    [IntegrationFact]
+    public void Importar_y_deshacer_un_servicio_real()
+    {
+        var name = "sOCWSManagerTest_" + Guid.NewGuid().ToString("N")[..8];
+        var dir = Path.Combine(Path.GetTempPath(), name);
+        Directory.CreateDirectory(dir);
+        var fakeNssm = Path.Combine(dir, "nssm.exe");
+        File.Copy(Binaries.TestApp, fakeNssm);
+        var scm = new ScmServiceManager();
+        var reg = WinRegistry.Services();
+        var output = new StringWriter();
+        var runner = new CliRunner(new CliContext { Scm = scm, Registry = reg, Deployer = new SocWsManager.Platform.HostDeployer(), Out = output, Err = output, WaitTimeout = TimeSpan.FromSeconds(30) });
+        int Run(params string[] args) => runner.Run(args);
+        try
+        {
+            scm.Create(name, new ScmSettings("\"" + fakeNssm + "\"", name, "", StartType.Demand, Accounts.LocalSystem, false, [], []), null);
+            reg.Set(Names.Parameters(name), Names.Application, RegValue.Expand(Binaries.TestApp));
+            reg.Set(Names.Parameters(name), Names.AppParameters, RegValue.Expand("--print 1"));
+            Assert.True(Run("import", name, "confirm") == 0, output.ToString());
+            Assert.True(SocWsManager.Import.NssmImport.IsOurs(reg.GetString(name, Names.ImagePath)));
+            Assert.Equal(0, Run("start", name));
+            Assert.Equal(ServiceState.Running, scm.Status(name).State);
+            // Parado antes de deshacer: la copia que hace de «original» no es un servicio y no arrancaría.
+            Assert.Equal(0, Run("stop", name));
+            Assert.Equal(0, Run("undo-import", name, "confirm"));
+            Assert.True(SocWsManager.Import.NssmImport.IsNssm(reg.GetString(name, Names.ImagePath)));
+        }
+        finally
+        {
+            try { scm.Control(name, ServiceControl.Stop); } catch (ScmException) { }
+            try { scm.Delete(name); } catch (ScmException) { }
+            try { Directory.Delete(dir, true); } catch (Exception) { }
+        }
+    }
 }
