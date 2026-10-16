@@ -1,14 +1,16 @@
 # Changelog — sOC WSManager
 
-## Sin publicar
+## 2026.10.16.0 — Menús · Menus
 
 **Español**
 
-- Menús contextuales y de bandeja con el aspecto común de las apps sOC (General 6.14).
+- Los menús tienen el mismo aspecto que en el resto de aplicaciones sOC: «Parar» sale en rojo y el
+  estado de cada servicio en el menú del icono junto al reloj es un icono de color.
 
 **English**
 
-- Context and tray menus with the common look of the sOC apps (General 6.14).
+- The menus look the same as in the rest of the sOC apps: "Stop" is shown in red and the state of
+  each service in the menu of the icon next to the clock is a coloured icon.
 
 ## 2026.10.1.0 — Primera versión · First version
 

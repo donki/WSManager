@@ -137,7 +137,8 @@ public sealed class AppServicesTests : IDisposable
         Assert.NotEmpty(es);
         Assert.True(WhatsNew.SameVersion(es[0].Version, CliRunner.Version()), "whatsnew.json no tiene la versión del csproj");
         Assert.NotEqual(es[0].Items, WhatsNew.Load("en")[0].Items);
-        Assert.Equal(new DateTime(2026, 10, 1), es[0].Date);
+        var ver = Version.Parse(CliRunner.Version());
+        Assert.Equal(new DateTime(ver.Major, ver.Minor, ver.Build), es[0].Date);   // la versión es la fecha
         Assert.Equal(WhatsNew.Load("en")[0].Items, WhatsNew.Load("fr")[0].Items);   // sin ese idioma: inglés
         Assert.Empty(WhatsNew.Load("es", new MemoryStream("no es json"u8.ToArray())));
         var seven = "[" + string.Join(",", Enumerable.Range(1, 7).Select(i => $"{{\"version\":\"1.0.{i}\",\"es\":[\"a\"]}}")) + "]";

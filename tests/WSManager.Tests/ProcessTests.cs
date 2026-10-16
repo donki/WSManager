@@ -315,6 +315,6 @@ public sealed class HostDebugTests : IDisposable
         Assert.Equal(2, q.ExitCode);
         var psi3 = new ProcessStartInfo(Binaries.Host, "version") { UseShellExecute = false, RedirectStandardOutput = true, CreateNoWindow = true };
         using var v = Process.Start(psi3)!;
-        Assert.Contains("2026.10.1.0", v.StandardOutput.ReadToEnd());
+        Assert.Contains(SocWsManager.Cli.CliRunner.Version(), v.StandardOutput.ReadToEnd());
     }
 }
