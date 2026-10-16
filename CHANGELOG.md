@@ -1,5 +1,15 @@
 # Changelog — sOC WSManager
 
+## Sin publicar
+
+**Español**
+
+- Menús contextuales y de bandeja con el aspecto común de las apps sOC (General 6.14).
+
+**English**
+
+- Context and tray menus with the common look of the sOC apps (General 6.14).
+
 ## 2026.10.1.0 — Primera versión · First version
 
 **Español**

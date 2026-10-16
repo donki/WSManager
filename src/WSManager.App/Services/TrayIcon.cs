@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using SocWsManager.Localization;
 using SocWsManager.Scm;
 using SocWsManager.Services;
@@ -165,12 +164,16 @@ public sealed class TrayIcon : IDisposable
         return item;
     }
 
-    /// <summary>El punto de color del estado (verde, gris, ámbar o rojo).</summary>
-    public static Ellipse Dot(ServiceState state, bool unexpected) => new()
+    /// <summary>
+    /// El punto de color del estado (verde, gris, ámbar o rojo), como glifo de Segoe Fluent Icons
+    /// igual que los demás iconos del menú (General 6.14).
+    /// </summary>
+    public static TextBlock Dot(ServiceState state, bool unexpected) => new()
     {
-        Width = 10,
-        Height = 10,
-        Fill = (Brush)Application.Current.FindResource(StateColorKey(state, unexpected)),
+        Text = "",
+        FontFamily = (FontFamily)Application.Current.FindResource("IconFont"),
+        FontSize = 14,
+        Foreground = (Brush)Application.Current.FindResource(StateColorKey(state, unexpected)),
         VerticalAlignment = VerticalAlignment.Center,
     };
 

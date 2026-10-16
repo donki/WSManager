@@ -254,7 +254,7 @@ public partial class App : Application
             var stopped = row.State == ServiceState.Stopped;
             var paused = row.State == ServiceState.Paused;
             item.Items.Add(TrayIcon.Item(Loc.Get("ActionStart"), "", () => _ = ServiceActions.Start(MainView, row), stopped));
-            item.Items.Add(TrayIcon.Item(Loc.Get("ActionStop"), "", () => _ = ServiceActions.Stop(MainView, row), !stopped));
+            item.Items.Add(TrayIcon.Item(Loc.Get("ActionStop"), "", () => _ = ServiceActions.Stop(MainView, row), !stopped, danger: true));
             item.Items.Add(paused
                 ? TrayIcon.Item(Loc.Get("ActionContinue"), "", () => _ = ServiceActions.Continue(MainView, row))
                 : TrayIcon.Item(Loc.Get("ActionPause"), "", () => _ = ServiceActions.Pause(MainView, row), running));
